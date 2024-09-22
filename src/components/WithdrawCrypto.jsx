@@ -2,7 +2,7 @@ import { i1, i2, sidea, swap, swapt } from "../assets";
 import Sidebar from "./Sidebar";
 //import { connectMetaMask, getAccountBalance } from "../utils/web3Utils";
 import { connectMetaMask, getAccountBalance } from "../utils/web3Utils";
-import { lockETH } from "../utils/lockETH";
+import { lockETH } from "../utils/LockETH";
 
 import { useState } from "react";
 
