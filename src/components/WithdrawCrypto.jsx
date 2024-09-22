@@ -1,8 +1,13 @@
 import { i1, i2, sidea, swap, swapt } from "../assets";
 import Sidebar from "./Sidebar";
 //import { connectMetaMask, getAccountBalance } from "../utils/web3Utils";
+//eth to runes
 import { connectMetaMask, getAccountBalance } from "../utils/web3Utils";
 import { lockETH } from "../utils/LockETH";
+
+//rune to eth
+import web3 from "../utils/web3";
+import runeToEthBridge from "../utils/runeToEthBridge";
 
 import { useState } from "react";
 
@@ -12,6 +17,8 @@ function WithdrawCrypto() {
   const [error, setError] = useState(null);
   const [ethAmount, setEthAmount] = useState("");
   const [runeAddress, setRuneAddress] = useState("");
+  //rune
+  const [amount, setAmount] = useState("");
 
   const connectWallet = async () => {
     const result = await connectMetaMask();
@@ -66,6 +73,29 @@ function WithdrawCrypto() {
     setAccount(null); 
   };  
   */
+
+  const depositETH = async () => {
+    try {
+      const accounts = await web3.eth.getAccounts(); // Get user's accounts from MetaMask
+      if (accounts.length === 0) {
+        alert("No accounts found. Please connect to MetaMask.");
+        return;
+      }
+
+      const ethValue = web3.utils.toWei(amount, "ether"); // Convert to Wei
+
+      // Call depositETH function on the contract
+      await runeToEthBridge.methods.depositETH().send({
+        from: accounts[0],
+        value: ethValue, // Sending value (ETH) along with the transaction
+      });
+
+      alert("ETH successfully deposited to the bridge!");
+    } catch (error) {
+      console.error(error);
+      alert("An error occurred during the transaction.");
+    }
+  };
 
   return (
     <div className="">
@@ -187,7 +217,7 @@ function WithdrawCrypto() {
             </div>
             <div className="justify-start hidden items-center gap-2 md:inline-flex">
               <div className="text-[#444444] text-lg font-normal font-inter leading-relaxed">
-                1 Eth = 13.19M Runes
+                1 Eth = 4.686 Runes
               </div>
               <img src={swapt} alt="Swap Thin" className="w-6 h-6 relative" />
             </div>
@@ -205,22 +235,22 @@ function WithdrawCrypto() {
 
           <div className="min-h-[308px] w-full p-6 bg-[#f4f4f4] rounded-2xl border border-[#d9d9d9] flex-col justify-center items-start md:gap-8 gap-12 inline-flex">
             <div>
+              <button
+                onClick={account ? disconnectWallet : connectWallet}
+                className="wallet-btn flex items-center gap-0.5"
+              >
+                {account
+                  ? `${account.substring(0, 5)}...${account.substring(
+                      account.length - 4
+                    )}`
+                  : "Connect BTC Wallet"}
+              </button>
+
               {/*
-                  <button
-                    onClick={account ? disconnectWallet : connectWallet}
-                    className="wallet-btn flex items-center gap-0.5"
-                    r
-                  >
-                    {account
-                      ? `${account.substring(0, 5)}...${account.substring(
-                          account.length - 4
-                        )}`
-                      : "Wallet"}
-                  </button>
-                  */}
               <button className="wallet-btn flex items-center gap-0.5">
                 Connect BTC Wallet
-              </button>
+              </button>    
+                  */}
             </div>
 
             <div className="justify-between items-center w-full flex xl:flex-row flex-col md:gap-5 gap-3">
@@ -287,6 +317,9 @@ function WithdrawCrypto() {
                 <div className="xl:w-[351px] w-full max-w-full p-4 bg-white rounded-xl border border-[#bcbcbc] justify-between items-center inline-flex">
                   <div className="grow shrink basis-0 h-5 justify-start items-center gap-2 flex">
                     <input
+                      type="text"
+                      value={amount}
+                      onChange={(e) => setAmount(e.target.value)}
                       className="placeholder:text-[#bcbcbc] border-none outline-none text-sm font-medium font-inter leading-tight"
                       placeholder="Amount of Runes"
                     />
@@ -305,8 +338,13 @@ function WithdrawCrypto() {
               </div>
               <img src={swapt} alt="Swap Thin" className="w-6 h-6 relative" />
             </div>
-            <div className="swap transition-all duration-200 md:w-fit w-full flex justify-center">
-              Send Runes
+            <div>
+              <button
+                onClick={depositETH}
+                className="swap transition-all duration-200 md:w-fit w-full flex justify-center"
+              >
+                Send Runes
+              </button>
             </div>
           </div>
 
