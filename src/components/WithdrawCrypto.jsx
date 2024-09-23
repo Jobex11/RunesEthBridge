@@ -1,14 +1,12 @@
 import { i1, i2, sidea, swap, swapt } from "../assets";
 import Sidebar from "./Sidebar";
-//import { connectMetaMask, getAccountBalance } from "../utils/web3Utils";
-//eth to runes
+import axios from "axios";
+//blockchain
 import { connectMetaMask, getAccountBalance } from "../utils/web3Utils";
 import { lockETH } from "../utils/LockETH";
-
-//rune to eth
 import web3 from "../utils/web3";
 import runeToEthBridge from "../utils/runeToEthBridge";
-
+//react hooks
 import { useState, useEffect } from "react";
 
 function WithdrawCrypto() {
@@ -17,9 +15,10 @@ function WithdrawCrypto() {
   const [error, setError] = useState(null);
   const [ethAmount, setEthAmount] = useState("");
   const [runeAddress, setRuneAddress] = useState("");
-  //rune
   const [amount, setAmount] = useState("");
   const [runeaccount, setRuneaccount] = useState(null);
+
+  // main code
 
   const connectWallet = async () => {
     const result = await connectMetaMask();
@@ -40,6 +39,75 @@ function WithdrawCrypto() {
     setRuneAddress("");
   };
 
+  // Replace with your backend URL if running locally
+  const BASE_URL = "http://localhost:5000"; // or your production URL
+
+  /* works before sha
+  const handleLockETH = async ({ account }) => {
+    if (ethAmount && runeAddress) {
+      const result = await lockETH(runeAddress, ethAmount, account);
+      if (result.status === "success") {
+        alert(result.message);
+
+        try {
+          await axios.post(`${BASE_URL}/api/transactions`, {
+            runeAddress,
+            ethAmount: parseFloat(ethAmount),
+            account,
+          });
+          fetchTransactions(); 
+        } catch (error) {
+          console.error("Error saving transaction:", error);
+        }
+      } else {
+        setError(result.message);
+      }
+    } else {
+      setError("Please enter a valid amount and Runes address.");
+    }
+  };
+*/
+
+  const handleLockETH = async () => {
+    if (ethAmount && runeAddress) {
+      try {
+        const ethValue = web3.utils.toWei(ethAmount, "ether");
+
+        // Call the contract to lock ETH (this should return the transaction)
+        const transaction = await runeToEthBridge.methods.depositETH().send({
+          from: account,
+          value: ethValue,
+        });
+
+        // Get transaction details from the blockchain response
+        const { transactionHash, from, to } = transaction;
+
+        alert(`Transaction successful: ${transactionHash}`);
+
+        // Post transaction data to your backend
+        const transactionData = {
+          transactionHash,
+          from,
+          to: runeAddress,
+          ethAmount: parseFloat(ethAmount),
+          account,
+          timestamp: new Date().toISOString(), // Optional: capture the current time
+        };
+
+        await axios.post(`${BASE_URL}/api/transactions`, transactionData);
+        alert("Transaction data saved successfully!");
+      } catch (error) {
+        console.error("Transaction failed:", error);
+        setError("An error occurred during the transaction.");
+      }
+    } else {
+      setError("Please enter a valid amount and Rune address.");
+    }
+  };
+
+  /*
+
+
   const handleLockETH = async () => {
     if (ethAmount && runeAddress) {
       const result = await lockETH(runeAddress, ethAmount, account);
@@ -52,10 +120,7 @@ function WithdrawCrypto() {
       setError("Please enter a valid amount and Runes address.");
     }
   };
-
-  //end
-
-  // Function to connect MetaMask and request account access
+*/
   const connectMetaMask = async () => {
     try {
       const accounts = await window.ethereum.request({
@@ -68,26 +133,23 @@ function WithdrawCrypto() {
     }
   };
 
-  // Function to simulate disconnecting MetaMask (clear account state)
   const disconnectMetaMask = () => {
     setAccount(null);
     console.log("Disconnected");
   };
 
-  // Handle account change event (e.g., user switches accounts in MetaMask)
   useEffect(() => {
     if (window.ethereum) {
       window.ethereum.on("accountsChanged", (accounts) => {
         if (accounts.length > 0) {
-          setAccount(accounts[0]); // Update with the new account
+          setAccount(accounts[0]);
         } else {
-          setAccount(null); // No accounts available, treat as disconnected
+          setAccount(null);
         }
       });
     }
   }, []);
 
-  // Function to handle deposit ETH
   const depositETH = async () => {
     try {
       if (!account) {
@@ -110,42 +172,6 @@ function WithdrawCrypto() {
     }
   };
 
-  //start
-  /*
-  const connectMetaMask = async () => {
-    try {
-      const accounts = await window.ethereum.request({
-        method: "eth_requestAccounts",
-      });
-      setAccount(accounts[0]);
-      console.log("Connected account:", accounts[0]);
-    } catch (error) {
-      console.error("Error connecting MetaMask:", error);
-    }
-  };
-
-  const depositETH = async () => {
-    try {
-      if (!account) {
-        alert("Please connect to MetaMask first.");
-        return;
-      }
-
-      const ethValue = web3.utils.toWei(amount, "ether"); 
-
-      await runeToEthBridge.methods.depositETH().send({
-        from: account,
-        value: ethValue, 
-      });
-
-      alert("ETH successfully deposited to the bridge!");
-    } catch (error) {
-      console.error(error);
-      alert("An error occurred during the transaction.");
-    }
-  };
-  */
-
   return (
     <div className="">
       <div className="lg:px-16 lg:py-7 py-4 md:px-8 px-4 w-full flex justify-between md:gap-10 gap-6 md:flex-row flex-col">
@@ -165,9 +191,7 @@ function WithdrawCrypto() {
                 </div>
               </div>
             </div>
-            {/*
-            
-            */}
+            {/* transaction */}
           </div>
           {/*
           ETH TO RNES
