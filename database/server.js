@@ -67,12 +67,10 @@ app.post("/api/transactions", async (req, res) => {
   }
 });
 
-// i added get
-app.get("/api/transactions/:account", async (req, res) => {
-  const { account } = req.params;
-
+app.get("/api/transactions", async (req, res) => {
   try {
-    const transactions = await Transaction.find({ account });
+    // Fetch all transactions from the database
+    const transactions = await Transaction.find();
     res.status(200).json(transactions);
   } catch (error) {
     console.error("Error fetching transactions:", error);
