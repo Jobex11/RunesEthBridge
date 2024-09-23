@@ -10,8 +10,29 @@ import {
   di4,
 } from "../assets";
 import Sidebar from "./Sidebar";
+import axios from "axios";
 
+import React, { useState, useEffect } from "react";
 function Dashboard() {
+  //backend
+  const [transactions, setTransactions] = useState([]);
+
+  // Fetch transactions from backend
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:5001/api/transactions")
+      .then((response) => {
+        setTransactions(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching transactions:", error);
+      });
+  }, []);
+
+  //backend stops
+  /*
+   */
   const dashboardData = [
     {
       date: "2 days ago",
@@ -62,146 +83,6 @@ function Dashboard() {
       chain: {
         from: chain1,
         to: chain2,
-      },
-      from: "0xd97e...b38ad7",
-      to: "0xd97e...b38ad7",
-      deposit: "0xd97e...b38ad7",
-      withdraw: "0xd97e...b38ad7",
-      status: "Completed",
-    },
-    {
-      date: "18 days ago",
-      token: "RUNESBRIDGEXYZ",
-      amount: "123,909",
-      chain: {
-        from: chain4,
-        to: chain2,
-      },
-      from: "0xd97e...b38ad7",
-      to: "0xd97e...b38ad7",
-      deposit: "0xd97e...b38ad7",
-      withdraw: "0xd97e...b38ad7",
-      status: "Completed",
-    },
-    {
-      date: "18 days ago",
-      token: "RUNESBRIDGEXYZ",
-      amount: "123,909",
-      chain: {
-        from: chain2,
-        to: chain4,
-      },
-      from: "0xd97e...b38ad7",
-      to: "0xd97e...b38ad7",
-      deposit: "0xd97e...b38ad7",
-      withdraw: "0xd97e...b38ad7",
-      status: "Completed",
-    },
-    {
-      date: "18 days ago",
-      token: "RUNESBRIDGEXYZ",
-      amount: "123,909",
-      chain: {
-        from: chain2,
-        to: chain4,
-      },
-      from: "0xd97e...b38ad7",
-      to: "0xd97e...b38ad7",
-      deposit: "0xd97e...b38ad7",
-      withdraw: "0xd97e...b38ad7",
-      status: "Completed",
-    },
-    {
-      date: "18 days ago",
-      token: "RUNESBRIDGEXYZ",
-      amount: "123,909",
-      chain: {
-        from: chain2,
-        to: chain4,
-      },
-      from: "0xd97e...b38ad7",
-      to: "0xd97e...b38ad7",
-      deposit: "0xd97e...b38ad7",
-      withdraw: "0xd97e...b38ad7",
-      status: "Completed",
-    },
-    {
-      date: "18 days ago",
-      token: "RUNESBRIDGEXYZ",
-      amount: "123,909",
-      chain: {
-        from: chain2,
-        to: chain4,
-      },
-      from: "0xd97e...b38ad7",
-      to: "0xd97e...b38ad7",
-      deposit: "0xd97e...b38ad7",
-      withdraw: "0xd97e...b38ad7",
-      status: "Completed",
-    },
-    {
-      date: "18 days ago",
-      token: "RUNESBRIDGEXYZ",
-      amount: "123,909",
-      chain: {
-        from: chain2,
-        to: chain4,
-      },
-      from: "0xd97e...b38ad7",
-      to: "0xd97e...b38ad7",
-      deposit: "0xd97e...b38ad7",
-      withdraw: "0xd97e...b38ad7",
-      status: "Completed",
-    },
-    {
-      date: "18 days ago",
-      token: "RUNESBRIDGEXYZ",
-      amount: "123,909",
-      chain: {
-        from: chain2,
-        to: chain4,
-      },
-      from: "0xd97e...b38ad7",
-      to: "0xd97e...b38ad7",
-      deposit: "0xd97e...b38ad7",
-      withdraw: "0xd97e...b38ad7",
-      status: "Completed",
-    },
-    {
-      date: "18 days ago",
-      token: "RUNESBRIDGEXYZ",
-      amount: "123,909",
-      chain: {
-        from: chain2,
-        to: chain4,
-      },
-      from: "0xd97e...b38ad7",
-      to: "0xd97e...b38ad7",
-      deposit: "0xd97e...b38ad7",
-      withdraw: "0xd97e...b38ad7",
-      status: "Completed",
-    },
-    {
-      date: "18 days ago",
-      token: "RUNESBRIDGEXYZ",
-      amount: "123,909",
-      chain: {
-        from: chain2,
-        to: chain4,
-      },
-      from: "0xd97e...b38ad7",
-      to: "0xd97e...b38ad7",
-      deposit: "0xd97e...b38ad7",
-      withdraw: "0xd97e...b38ad7",
-      status: "Completed",
-    },
-    {
-      date: "18 days ago",
-      token: "RUNESBRIDGEXYZ",
-      amount: "123,909",
-      chain: {
-        from: chain2,
-        to: chain4,
       },
       from: "0xd97e...b38ad7",
       to: "0xd97e...b38ad7",
@@ -268,6 +149,7 @@ function Dashboard() {
   ];
   return (
     <div className="">
+      {/*backend stops*/}
       <div className="lg:px-16 lg:py-7 py-4 md:px-8 px-4 w-full flex justify-between md:gap-10 gap-6 md:flex-row flex-col">
         <Sidebar />
         <div className="w-full grid lg:grid-cols-4 md:grid-cols-2 xxs:grid-cols-4 grid-cols-2 2xl:gap-16 sm:gap-8 gap-4 h-fit">
@@ -340,6 +222,14 @@ function Dashboard() {
               <div className="">Withdraw Tx</div>
               <div className="">Status</div>
             </div>
+            <div className="grid grid-cols-5 md:min-w-[1350px] min-w-[900px] items-center gap-[21px] text-[#1f1f1f] text-[16px] md:text-xl font-normal font-inter text-center md:bg-transparent bg-[#F4F4F4]">
+              <div className="">Date</div>
+              <div className="">Amount</div>
+              <div className="">From</div>
+              <div className="">To</div>
+              <div className="">TX-hash</div>
+            </div>
+            {/*
             {dashboardData.map((item, key) => (
               <div
                 key={key}
@@ -370,6 +260,39 @@ function Dashboard() {
                 </div>
               </div>
             ))}
+            */}
+            <div>
+              <table>
+                <tbody>
+                  {transactions.length > 0 ? (
+                    transactions.map((transaction, key) => (
+                      <div key={key}>
+                        {
+                          <div
+                            key={transaction._id}
+                            className="grid grid-cols-5 md:min-w-[1350px] min-w-[900px] items-center gap-[21px] text-[#1f1f1f] text-center text-[12px] md:text-base font-normal font-inter"
+                          >
+                            <div>{transaction.to}</div>
+                            <div>
+                              {new Date(transaction.timestamp).toLocaleString()}
+                            </div>
+                            <div>{transaction.ethAmount}</div>
+                            <div>{transaction.account}</div>
+
+                            <div>{transaction.transactionHash}</div>
+                          </div>
+                        }
+                      </div>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="6">No transactions found</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+            {/* backends*/}
           </div>
         </div>
       </div>
