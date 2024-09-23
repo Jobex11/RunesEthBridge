@@ -9,7 +9,7 @@ import { lockETH } from "../utils/LockETH";
 import web3 from "../utils/web3";
 import runeToEthBridge from "../utils/runeToEthBridge";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function WithdrawCrypto() {
   const [account, setAccount] = useState(null);
@@ -19,6 +19,7 @@ function WithdrawCrypto() {
   const [runeAddress, setRuneAddress] = useState("");
   //rune
   const [amount, setAmount] = useState("");
+  const [runeaccount, setRuneaccount] = useState(null);
 
   const connectWallet = async () => {
     const result = await connectMetaMask();
@@ -52,33 +53,45 @@ function WithdrawCrypto() {
     }
   };
 
-  /*
-  const [account, setAccount] = useState(null);
-  const [balance, setBalance] = useState(null);
-  const [error, setError] = useState(null);
+  //end
 
-  const connectWallet = async () => {
-    const result = await connectMetaMask();
-
-    if (result.status === "success") {
-      setAccount(result.account);
-      const accountBalance = await getAccountBalance(result.account);
-      setBalance(accountBalance);
-    } else {
-      setError(result.message);
+  // Function to connect MetaMask and request account access
+  const connectMetaMask = async () => {
+    try {
+      const accounts = await window.ethereum.request({
+        method: "eth_requestAccounts",
+      });
+      setAccount(accounts[0]);
+      console.log("Connected account:", accounts[0]);
+    } catch (error) {
+      console.error("Error connecting MetaMask:", error);
     }
   };
 
-  const disconnectWallet = () => {
-    setAccount(null); 
-  };  
-  */
+  // Function to simulate disconnecting MetaMask (clear account state)
+  const disconnectMetaMask = () => {
+    setAccount(null);
+    console.log("Disconnected");
+  };
 
+  // Handle account change event (e.g., user switches accounts in MetaMask)
+  useEffect(() => {
+    if (window.ethereum) {
+      window.ethereum.on("accountsChanged", (accounts) => {
+        if (accounts.length > 0) {
+          setAccount(accounts[0]); // Update with the new account
+        } else {
+          setAccount(null); // No accounts available, treat as disconnected
+        }
+      });
+    }
+  }, []);
+
+  // Function to handle deposit ETH
   const depositETH = async () => {
     try {
-      const accounts = await web3.eth.getAccounts(); // Get user's accounts from MetaMask
-      if (accounts.length === 0) {
-        alert("No accounts found. Please connect to MetaMask.");
+      if (!account) {
+        alert("Please connect to MetaMask first.");
         return;
       }
 
@@ -86,7 +99,7 @@ function WithdrawCrypto() {
 
       // Call depositETH function on the contract
       await runeToEthBridge.methods.depositETH().send({
-        from: accounts[0],
+        from: account,
         value: ethValue, // Sending value (ETH) along with the transaction
       });
 
@@ -96,6 +109,42 @@ function WithdrawCrypto() {
       alert("An error occurred during the transaction.");
     }
   };
+
+  //start
+  /*
+  const connectMetaMask = async () => {
+    try {
+      const accounts = await window.ethereum.request({
+        method: "eth_requestAccounts",
+      });
+      setAccount(accounts[0]);
+      console.log("Connected account:", accounts[0]);
+    } catch (error) {
+      console.error("Error connecting MetaMask:", error);
+    }
+  };
+
+  const depositETH = async () => {
+    try {
+      if (!account) {
+        alert("Please connect to MetaMask first.");
+        return;
+      }
+
+      const ethValue = web3.utils.toWei(amount, "ether"); 
+
+      await runeToEthBridge.methods.depositETH().send({
+        from: account,
+        value: ethValue, 
+      });
+
+      alert("ETH successfully deposited to the bridge!");
+    } catch (error) {
+      console.error(error);
+      alert("An error occurred during the transaction.");
+    }
+  };
+  */
 
   return (
     <div className="">
@@ -221,8 +270,13 @@ function WithdrawCrypto() {
               </div>
               <img src={swapt} alt="Swap Thin" className="w-6 h-6 relative" />
             </div>
-            <div className="swap transition-all duration-200 md:w-fit w-full flex justify-center">
-              <button onClick={handleLockETH}>Send Eth</button>
+            <div>
+              <button
+                onClick={handleLockETH}
+                className="swap transition-all duration-200 md:w-fit w-full flex justify-center"
+              >
+                Send Eth
+              </button>
               {/*
               {error && <div className="text-red-500">{error}</div>} 
               */}
@@ -234,6 +288,7 @@ function WithdrawCrypto() {
           */}
 
           <div className="min-h-[308px] w-full p-6 bg-[#f4f4f4] rounded-2xl border border-[#d9d9d9] flex-col justify-center items-start md:gap-8 gap-12 inline-flex">
+            {/*
             <div>
               <button
                 onClick={account ? disconnectWallet : connectWallet}
@@ -245,14 +300,28 @@ function WithdrawCrypto() {
                     )}`
                   : "Connect BTC Wallet"}
               </button>
-
-              {/*
-              <button className="wallet-btn flex items-center gap-0.5">
-                Connect BTC Wallet
-              </button>    
-                  */}
+ 
             </div>
-
+            */}
+            <div>
+              {account ? (
+                <button
+                  onClick={disconnectMetaMask}
+                  className="wallet-btn flex items-center gap-0.5"
+                >
+                  {`${account.substring(0, 5)}...${account.substring(
+                    account.length - 4
+                  )}`}
+                </button>
+              ) : (
+                <button
+                  onClick={connectMetaMask}
+                  className="wallet-btn flex items-center gap-0.5"
+                >
+                  Connect BTC Wallet
+                </button>
+              )}
+            </div>
             <div className="justify-between items-center w-full flex xl:flex-row flex-col md:gap-5 gap-3">
               <div className="xl:w-[351px] w-full max-w-full md:min-h-[122px] flex flex-col gap-4 md:gap-[13px]">
                 <div className=" text-black md:text-2xl text-[16px] font-semibold font-bricolage leading-tight flex gap-2 items-center">
