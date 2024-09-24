@@ -4,13 +4,6 @@
     {
       "src": "database/index.js",
       "use": "@vercel/node"
-    },
-    {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "database/public"
-      }
     }
   ],
   "routes": [
@@ -20,7 +13,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/database/public/index.html"
+      "dest": "/database/index.js"
     }
   ]
 }
