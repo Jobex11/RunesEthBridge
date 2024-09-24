@@ -31,6 +31,7 @@ function WithdrawCrypto() {
         );
         const data = await response.json();
         setRate(data.thorchain.eth);
+        setEthrate(1 / data.thorchain.eth); // Calculate ETH to RUNE rate
       } catch (error) {
         console.error("Error fetching exchange rate:", error);
       }
@@ -39,30 +40,6 @@ function WithdrawCrypto() {
     fetchRate();
     const interval = setInterval(fetchRate, 60000); // Update every minute
     return () => clearInterval(interval); // Cleanup interval on unmount
-  }, []);
-
-  useEffect(() => {
-    const fetchRate = async () => {
-      try {
-        // Make the API call to fetch RUNE to ETH rate
-        const response = await fetch(
-          "https://api.coingecko.com/api/v3/simple/price?ids=thorchain&vs_currencies=eth"
-        );
-        const data = await response.json();
-
-        // Calculate how many RUNE for 1 ETH (1 / RUNE to ETH rate)
-        const ethToRune = 1 / data.thorchain.eth;
-
-        // Set the ETH to RUNE rate
-        setEthrate(ethToRune);
-      } catch (error) {
-        console.error("Error fetching exchange rate:", error);
-      }
-    };
-
-    fetchRate(); // Initial fetch
-    const interval = setInterval(fetchRate, 60000); // Refresh the rate every 60 seconds (1 minute)
-    return () => clearInterval(interval); // Clean up interval on component unmount
   }, []);
 
   //

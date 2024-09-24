@@ -19,7 +19,7 @@ function Dashboard() {
 
   // Fetch transactions from backend
   //const apiUrl =  "http://localhost:5001/api";
-   
+
   useEffect(() => {
     axios
       .get("https://runesethbridge.onrender.com/api/transactions")
@@ -173,9 +173,9 @@ function Dashboard() {
             <div className="grid grid-cols-5 md:min-w-[1350px] min-w-[900px] items-center gap-[21px] text-[#1f1f1f] text-[16px] md:text-xl font-normal font-inter text-center md:bg-transparent bg-[#F4F4F4]">
               <div className="">Date</div>
               <div className="">Amount</div>
-              <div className="">From</div>
+              <div className="">Tx-hash</div>
+              <div className="">from</div>
               <div className="">To</div>
-              <div className="">TX-hash</div>
             </div>
             {/*
             {dashboardData.map((item, key) => (
@@ -210,35 +210,33 @@ function Dashboard() {
             ))}
             */}
             <div>
-              <table>
-                <tbody>
-                  {transactions.length > 0 ? (
-                    transactions.map((transaction, key) => (
-                      <div key={key}>
-                        {
-                          <div
-                            key={transaction._id}
-                            className="grid grid-cols-5 md:min-w-[1350px] min-w-[900px] items-center gap-[21px] text-[#1f1f1f] text-center text-[12px] md:text-base font-normal font-inter"
-                          >
-                            <div>{transaction.to}</div>
-                            <div>
-                              {new Date(transaction.timestamp).toLocaleString()}
-                            </div>
-                            <div>{transaction.ethAmount}</div>
-                            <div>{transaction.account}</div>
+              {transactions.length > 0 ? (
+                transactions.map((transaction, key) => (
+                  <div key={key}>
+                    {
+                      <div
+                        key={transaction._id}
+                        className="grid grid-cols-5 md:min-w-[1350px] min-w-[900px] items-center gap-[21px] text-[#1f1f1f] text-center text-[12px] md:text-base font-normal font-inter"
+                      >
+                        <div>
+                          {new Date(transaction.timestamp).toLocaleString()}
+                        </div>
 
-                            <div>{transaction.transactionHash}</div>
-                          </div>
-                        }
+                        <div>{transaction.ethAmount}</div>
+
+                        <div>{transaction.transactionHash}</div>
+
+                        <div>{transaction.account}</div>
+                        <div>{transaction.to}</div>
                       </div>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="6">No transactions found</td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+                    }
+                  </div>
+                ))
+              ) : (
+                <div>
+                  <div colSpan="6">No transactions found</div>
+                </div>
+              )}
             </div>
             {/* backends*/}
           </div>
