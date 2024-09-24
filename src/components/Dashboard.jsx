@@ -20,8 +20,9 @@ function Dashboard() {
   // Fetch transactions from backend
 
   useEffect(() => {
+    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5001/api";
     axios
-      .get("http://localhost:5001/api/transactions")
+      .get(`${apiUrl}/transactions`)
       .then((response) => {
         setTransactions(response.data);
       })
