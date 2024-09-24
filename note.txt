@@ -1,1 +1,0 @@
-mongodb+srv://joblawal33:joblawal33@cluster0.kcjbv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0

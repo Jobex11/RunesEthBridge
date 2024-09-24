@@ -20,8 +20,10 @@ function Dashboard() {
   // Fetch transactions from backend
 
   useEffect(() => {
+    const apiUrl = import.meta.env.VITE_API_URL || "/api";
+    //the above should be removed if it does not work  get(""http://localhost:5001/api/transactions"")
     axios
-      .get("http://localhost:5001/api/transactions")
+      .get(`${apiUrl}/transactions`)
       .then((response) => {
         setTransactions(response.data);
       })
@@ -220,6 +222,7 @@ function Dashboard() {
             ))}
             */}
             <div>
+              {/*
               <table>
                 <tbody>
                   {transactions.length > 0 ? (
@@ -249,6 +252,7 @@ function Dashboard() {
                   )}
                 </tbody>
               </table>
+              */}
             </div>
             {/* backends*/}
           </div>
