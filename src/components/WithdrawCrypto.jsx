@@ -19,6 +19,53 @@ function WithdrawCrypto() {
   const [runeaccount, setRuneaccount] = useState(null);
   // main code
 
+  //api hooks
+  const [rate, setRate] = useState(null);
+  const [ethrate, setEthrate] = useState(null);
+
+  useEffect(() => {
+    const fetchRate = async () => {
+      try {
+        const response = await fetch(
+          "https://api.coingecko.com/api/v3/simple/price?ids=thorchain&vs_currencies=eth"
+        );
+        const data = await response.json();
+        setRate(data.thorchain.eth);
+      } catch (error) {
+        console.error("Error fetching exchange rate:", error);
+      }
+    };
+
+    fetchRate();
+    const interval = setInterval(fetchRate, 60000); // Update every minute
+    return () => clearInterval(interval); // Cleanup interval on unmount
+  }, []);
+
+  useEffect(() => {
+    const fetchRate = async () => {
+      try {
+        // Make the API call to fetch RUNE to ETH rate
+        const response = await fetch(
+          "https://api.coingecko.com/api/v3/simple/price?ids=thorchain&vs_currencies=eth"
+        );
+        const data = await response.json();
+
+        // Calculate how many RUNE for 1 ETH (1 / RUNE to ETH rate)
+        const ethToRune = 1 / data.thorchain.eth;
+
+        // Set the ETH to RUNE rate
+        setEthrate(ethToRune);
+      } catch (error) {
+        console.error("Error fetching exchange rate:", error);
+      }
+    };
+
+    fetchRate(); // Initial fetch
+    const interval = setInterval(fetchRate, 60000); // Refresh the rate every 60 seconds (1 minute)
+    return () => clearInterval(interval); // Clean up interval on component unmount
+  }, []);
+
+  //
   const connectWallet = async () => {
     const result = await connectMetaMask();
     if (result.status === "success") {
@@ -40,32 +87,6 @@ function WithdrawCrypto() {
 
   // Replace with your backend URL if running locally
   const BASE_URL = "http://localhost:5001"; // or your production URL
-
-  /* works before sha
-  const handleLockETH = async ({ account }) => {
-    if (ethAmount && runeAddress) {
-      const result = await lockETH(runeAddress, ethAmount, account);
-      if (result.status === "success") {
-        alert(result.message);
-
-        try {
-          await axios.post(`${BASE_URL}/api/transactions`, {
-            runeAddress,
-            ethAmount: parseFloat(ethAmount),
-            account,
-          });
-          fetchTransactions(); 
-        } catch (error) {
-          console.error("Error saving transaction:", error);
-        }
-      } else {
-        setError(result.message);
-      }
-    } else {
-      setError("Please enter a valid amount and Runes address.");
-    }
-  };
-*/
 
   const handleLockETH = async () => {
     if (ethAmount && runeAddress) {
@@ -149,6 +170,8 @@ function WithdrawCrypto() {
     }
   }, []);
 
+  //depositETH
+
   const depositETH = async () => {
     try {
       if (!account) {
@@ -156,14 +179,11 @@ function WithdrawCrypto() {
         return;
       }
 
-      const ethValue = web3.utils.toWei(amount, "ether"); // Convert to Wei
-
-      // Call depositETH function on the contract
+      const ethValue = web3.utils.toWei(amount, "ether");
       await runeToEthBridge.methods.depositETH().send({
         from: account,
-        value: ethValue, // Sending value (ETH) along with the transaction
+        value: ethValue,
       });
-
       alert("ETH successfully deposited to the bridge!");
     } catch (error) {
       console.error(error);
@@ -291,9 +311,13 @@ function WithdrawCrypto() {
             </div>
             <div className="justify-start hidden items-center gap-2 md:inline-flex">
               <div className="text-[#444444] text-lg font-normal font-inter leading-relaxed">
-                1 Eth = 4.686 Runes
+                {/*1 Eth = 4.686 Runes  */}
+                {rate ? (
+                  <p>1 ETH = {ethrate.toFixed(4)} RUNE</p> // Display the ETH to RUNE exchange rate
+                ) : (
+                  <p>Loading exchange rate...</p> // Show loading message while fetching
+                )}
               </div>
-              <img src={swapt} alt="Swap Thin" className="w-6 h-6 relative" />
             </div>
             <div>
               <button
@@ -428,9 +452,12 @@ function WithdrawCrypto() {
             </div>
             <div className="justify-start hidden items-center gap-2 md:inline-flex">
               <div className="text-[#444444] text-lg font-normal font-inter leading-relaxed">
-                1 Runes = 0.4686 Eth
+                {rate ? (
+                  <p>1 RUNE = {rate} ETH</p>
+                ) : (
+                  <p>Loading exchange rate...</p>
+                )}
               </div>
-              <img src={swapt} alt="Swap Thin" className="w-6 h-6 relative" />
             </div>
             <div>
               <button

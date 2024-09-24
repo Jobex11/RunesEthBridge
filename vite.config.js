@@ -7,6 +7,10 @@ export default defineConfig({
   optimizeDeps: {
     include: ["mongoose"],
   },
+
+  build: {
+    outDir: "./database/public", //output vie build to backends
+  },
 });
 
 /*

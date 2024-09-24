@@ -104,48 +104,6 @@ function Dashboard() {
       withdraw: "0xd97e...b38ad7",
       status: "Completed",
     },
-    {
-      date: "18 days ago",
-      token: "RUNESBRIDGEXYZ",
-      amount: "123,909",
-      chain: {
-        from: chain2,
-        to: chain4,
-      },
-      from: "0xd97e...b38ad7",
-      to: "0xd97e...b38ad7",
-      deposit: "0xd97e...b38ad7",
-      withdraw: "0xd97e...b38ad7",
-      status: "Completed",
-    },
-    {
-      date: "18 days ago",
-      token: "RUNESBRIDGEXYZ",
-      amount: "123,909",
-      chain: {
-        from: chain2,
-        to: chain4,
-      },
-      from: "0xd97e...b38ad7",
-      to: "0xd97e...b38ad7",
-      deposit: "0xd97e...b38ad7",
-      withdraw: "0xd97e...b38ad7",
-      status: "Completed",
-    },
-    {
-      date: "18 days ago",
-      token: "RUNESBRIDGEXYZ",
-      amount: "123,909",
-      chain: {
-        from: chain2,
-        to: chain4,
-      },
-      from: "0xd97e...b38ad7",
-      to: "0xd97e...b38ad7",
-      deposit: "0xd97e...b38ad7",
-      withdraw: "0xd97e...b38ad7",
-      status: "Completed",
-    },
   ];
   return (
     <div className="">
