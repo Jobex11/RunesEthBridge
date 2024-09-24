@@ -86,7 +86,7 @@ function WithdrawCrypto() {
   };
 
   // Replace with your backend URL if running locally
-  const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5001/api"; // or your production URL
+  const BASE_URL = "https://runesethbridge.onrender.com/api"; // or your production URL
 
   const handleLockETH = async () => {
     if (ethAmount && runeAddress) {

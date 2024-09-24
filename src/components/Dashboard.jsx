@@ -18,11 +18,11 @@ function Dashboard() {
   const [transactions, setTransactions] = useState([]);
 
   // Fetch transactions from backend
-
+  //const apiUrl =  "http://localhost:5001/api";
+   
   useEffect(() => {
-    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5001/api";
     axios
-      .get(`${apiUrl}/transactions`)
+      .get("https://runesethbridge.onrender.com/api/transactions")
       .then((response) => {
         setTransactions(response.data);
       })
