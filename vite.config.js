@@ -9,7 +9,7 @@ export default defineConfig({
   },
 
   build: {
-    outDir: "./database/public", //output vie build to backends
+    outDir: "dist", //output vie build to backends
   },
 });
 
