@@ -19,11 +19,9 @@ function Dashboard() {
 
   // Fetch transactions from backend
 
-  /*
   useEffect(() => {
-    const apiUrl = import.meta.env.VITE_API_URL || "/api";
     axios
-      .get(`${apiUrl}/transactions`)
+      .get("http://localhost:5001/api/transactions")
       .then((response) => {
         setTransactions(response.data);
       })
@@ -31,7 +29,7 @@ function Dashboard() {
         console.error("Error fetching transactions:", error);
       });
   }, []);
-*/
+
   //backend stops
   /*
    */
@@ -171,17 +169,6 @@ function Dashboard() {
       <div className="lg:px-16 lg:py-10 py-2 md:px-8 px-4 w-full max-w-full overflow-x-hidden flex justify-between md:gap-10 gap-6 md:flex-row flex-col">
         <div className="p-6 lg:p-10 rounded-[16px] border-[#D9D9D9] border-[1px] ">
           <div className="grid grid-cols-1 gap-10 w-full overflow-x-auto dashboard">
-            <div className="grid grid-cols-9 md:min-w-[1350px] min-w-[900px] items-center gap-[21px] text-[#1f1f1f] text-[16px] md:text-xl font-normal font-inter text-center md:bg-transparent bg-[#F4F4F4]">
-              <div className="">Date</div>
-              <div className="">Token</div>
-              <div className="">Amount</div>
-              <div className="">Chain</div>
-              <div className="">From</div>
-              <div className="">To</div>
-              <div className="">Deposit TX</div>
-              <div className="">Withdraw Tx</div>
-              <div className="">Status</div>
-            </div>
             <div className="grid grid-cols-5 md:min-w-[1350px] min-w-[900px] items-center gap-[21px] text-[#1f1f1f] text-[16px] md:text-xl font-normal font-inter text-center md:bg-transparent bg-[#F4F4F4]">
               <div className="">Date</div>
               <div className="">Amount</div>
@@ -222,7 +209,6 @@ function Dashboard() {
             ))}
             */}
             <div>
-              {/*
               <table>
                 <tbody>
                   {transactions.length > 0 ? (
@@ -252,7 +238,6 @@ function Dashboard() {
                   )}
                 </tbody>
               </table>
-              */}
             </div>
             {/* backends*/}
           </div>
