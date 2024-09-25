@@ -87,4 +87,4 @@ contract RuneToEthBridge {
     // Fallback function to receive ETH
     receive() external payable {}
 }
-//0x2e17Eb489a48D8cC2a15e928F53560528Bee9957
+//contract address on Eth testnet ===> 0x2e17Eb489a48D8cC2a15e928F53560528Bee9957

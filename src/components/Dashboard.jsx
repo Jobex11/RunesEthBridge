@@ -234,7 +234,7 @@ function Dashboard() {
                 ))
               ) : (
                 <div>
-                  <div colSpan="6">No transactions found</div>
+                  <div colSpan="6">Loading Transactions history...</div>
                 </div>
               )}
             </div>

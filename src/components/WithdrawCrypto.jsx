@@ -18,11 +18,41 @@ function WithdrawCrypto() {
   const [amount, setAmount] = useState("");
   const [runeaccount, setRuneaccount] = useState(null);
   // main code
-
-  //api hooks
   const [rate, setRate] = useState(null);
   const [ethrate, setEthrate] = useState(null);
+  const [walletAddress, setWalletAddress] = useState(null);
 
+  const connectBTCWallet = async () => {
+    try {
+      const wallet = window.unisat; // Unisat wallet object
+      if (!wallet) {
+        alert("Unisat Wallet not found. Please install Unisat extension.");
+        return;
+      }
+
+      // Request access to the user's wallet
+      const accounts = await wallet.requestAccounts();
+      setWalletAddress(accounts[0]);
+    } catch (error) {
+      console.error("Error connecting to wallet:", error);
+    }
+  };
+
+  const disconnectBTCWallet = () => {
+    setWalletAddress(null); // Clear the wallet address to "disconnect"
+  };
+
+  const handleButtonClick = () => {
+    if (walletAddress) {
+      disconnectBTCWallet(); // Disconnect if already connected
+    } else {
+      connectBTCWallet(); // Connect if not connected
+    }
+  };
+  // ended
+  //'https://api.coingecko.com/api/v3/simple/price?ids=ethereum,bitcoin,thorchain&vs_currencies=btc,rune'
+
+  //   "https://api.coingecko.com/api/v3/simple/price?ids=thorchain&vs_currencies=eth"
   useEffect(() => {
     const fetchRate = async () => {
       try {
@@ -102,22 +132,6 @@ function WithdrawCrypto() {
     }
   };
 
-  /*
-
-
-  const handleLockETH = async () => {
-    if (ethAmount && runeAddress) {
-      const result = await lockETH(runeAddress, ethAmount, account);
-      if (result.status === "success") {
-        alert(result.message);
-      } else {
-        setError(result.message);
-      }
-    } else {
-      setError("Please enter a valid amount and Runes address.");
-    }
-  };
-*/
   const connectMetaMask = async () => {
     try {
       const accounts = await window.ethereum.request({
@@ -330,7 +344,20 @@ function WithdrawCrypto() {
             </div>
             */}
             <div>
-              {account ? (
+              <button
+                onClick={handleButtonClick}
+                className="wallet-btn flex items-center gap-0.5"
+              >
+                {walletAddress
+                  ? `${walletAddress.substring(
+                      0,
+                      5
+                    )}...${walletAddress.substring(walletAddress.length - 4)}`
+                  : "Connect BTC Wallet"}
+              </button>
+
+              {/*
+{account ? (
                 <button
                   onClick={disconnectMetaMask}
                   className="wallet-btn flex items-center gap-0.5"
@@ -347,6 +374,7 @@ function WithdrawCrypto() {
                   Connect BTC Wallet
                 </button>
               )}
+*/}
             </div>
             <div className="justify-between items-center w-full flex xl:flex-row flex-col md:gap-5 gap-3">
               <div className="xl:w-[351px] w-full max-w-full md:min-h-[122px] flex flex-col gap-4 md:gap-[13px]">

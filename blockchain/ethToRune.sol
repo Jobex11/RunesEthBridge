@@ -90,4 +90,4 @@ contract EthereumToRuneBridge {
         admin = newAdmin;
     }
 }
-// 0x307fEa2742660f32c5b35FeFa98f6d4069481adF
+//contract address on Eth testnet ==> 0x307fEa2742660f32c5b35FeFa98f6d4069481adF
