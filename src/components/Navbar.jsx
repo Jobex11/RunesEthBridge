@@ -16,6 +16,13 @@ import {
 } from "../assets";
 import { useDispatch, useSelector } from "react-redux";
 import { setNavOpen } from "../store/ui";
+//reown
+import { useAppKit } from "@reown/appkit/react";
+import { useAppKitAccount } from "@reown/appkit/react";
+
+const shortenAddress = (address) => {
+  return `${address.slice(0, 5)}...${address.slice(-4)}`;
+};
 
 //  connecting the blockchain
 function Navbar() {
@@ -42,6 +49,18 @@ function Navbar() {
   // Function to disconnect MetaMask wallet
   const disconnectWallet = () => {
     setAccount(null); // Clears the account state, effectively "disconnecting"
+  };
+
+  // Store connected wallet info in state
+  const { open } = useAppKit();
+  const { address, isConnected } = useAppKitAccount();
+
+  const handleWalletAction = () => {
+    if (isConnected) {
+      close();
+    } else {
+      open();
+    }
   };
 
   return (
@@ -84,10 +103,13 @@ function Navbar() {
             <img src={maskgroup3} alt="maskgroup3" />
           </Link>
         </div>
-
-        <button
+        <button onClick={open} className="wallet-btn flex items-center gap-0.5">
+          {address ? shortenAddress(address) : "Connect Eth Wallet"}
+        </button>
+        {/*
+<button
           onClick={account ? disconnectWallet : connectWallet}
-          className="wallet-btn flex items-center gap-0.5"r
+          className="wallet-btn flex items-center gap-0.5"
         >
           {account
             ? `${account.substring(0, 5)}...${account.substring(
@@ -96,17 +118,7 @@ function Navbar() {
             : "Wallet"}
         </button>
 
-        {/*
-        <Link to={"/dashboard"} className="flex items-center gap-0.5">
-          <div className="wallet-btn">Wallet</div>
-          <img
-            src={menu}
-            alt="Menu"
-            className="lg:hidden w-5"
-            onClick={() => dispatch(setNavOpen(!navOpen))}
-          />
-        </Link>
-        */}
+*/}
       </div>
       {navOpen && (
         <div className="links px-6 py-4 lg:hidden z-[100] absolute w-fit left-4 flex flex-col gap-5 items-center rounded-[12px] border-[1px] border-[#EEE] bg-[#F4F4F4]">

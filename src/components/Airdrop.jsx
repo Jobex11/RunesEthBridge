@@ -1,43 +1,21 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { sidea } from "../assets";
 import Sidebar from "./Sidebar";
+//test imports
 
 function Airdrop() {
   const [email, setEmail] = useState("");
-  // added the hooks below
-  const [walletAddress, setWalletAddress] = useState(null);
+  //test hooks
 
-  const connectWallet = async () => {
-    try {
-      const wallet = window.unisat; // Unisat wallet object
-      if (!wallet) {
-        alert("Unisat Wallet not found. Please install Unisat extension.");
-        return;
-      }
+  // ended
 
-      // Request access to the user's wallet
-      const accounts = await wallet.requestAccounts();
-      setWalletAddress(accounts[0]);
-    } catch (error) {
-      console.error("Error connecting to wallet:", error);
-    }
-  };
-// ended
   return (
     <div className="">
       <div className="lg:px-16 lg:py-7 py-4 md:px-8 px-4 w-full flex justify-between md:gap-10 gap-6 md:flex-row flex-col">
         <Sidebar />
         <div className="w-full flex flex-col gap-6 ">
-          
-          <div>
-            {/* created this div*/}
-
-         <button onClick={connectWallet}>
-        {walletAddress ? `Connected: ${walletAddress}` : "Connect BTC Wallet"}
-         </button>
-         <div>check unisat wallet</div>
-         </div>
-          
+          {/* test*/}
+          <div></div>
           <div className="md:flex hidden flex-col w-full gap-4">
             <div className="text-start text-black text-2xl font-bold font-bricolage">
               Airdrop

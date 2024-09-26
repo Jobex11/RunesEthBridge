@@ -7,9 +7,8 @@ export default defineConfig({
   optimizeDeps: {
     include: ["mongoose"],
   },
-
-  build: {
-    outDir: "dist", //output vie build to backends
+  define: {
+    global: "globalThis",
   },
 });
 

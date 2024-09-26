@@ -8,6 +8,13 @@ import web3 from "../utils/web3";
 import runeToEthBridge from "../utils/runeToEthBridge";
 //react hooks
 import { useState, useEffect } from "react";
+//eth connection
+import { useAppKit } from "@reown/appkit/react";
+import { useAppKitAccount } from "@reown/appkit/react";
+
+const shortenAddress = (address) => {
+  return `${address.slice(0, 5)}...${address.slice(-4)}`;
+};
 
 function WithdrawCrypto() {
   const [account, setAccount] = useState(null);
@@ -20,17 +27,30 @@ function WithdrawCrypto() {
   // main code
   const [rate, setRate] = useState(null);
   const [ethrate, setEthrate] = useState(null);
+  // Store connected wallet info in state
+  const { open } = useAppKit();
+  const { address, isConnected } = useAppKitAccount();
+
+  const handleWalletAction = () => {
+    if (isConnected) {
+      close();
+    } else {
+      open();
+    }
+  };
+  /*
   const [walletAddress, setWalletAddress] = useState(null);
+
+
 
   const connectBTCWallet = async () => {
     try {
-      const wallet = window.unisat; // Unisat wallet object
+      const wallet = window.unisat; 
       if (!wallet) {
         alert("Unisat Wallet not found. Please install Unisat extension.");
         return;
       }
 
-      // Request access to the user's wallet
       const accounts = await wallet.requestAccounts();
       setWalletAddress(accounts[0]);
     } catch (error) {
@@ -39,17 +59,88 @@ function WithdrawCrypto() {
   };
 
   const disconnectBTCWallet = () => {
-    setWalletAddress(null); // Clear the wallet address to "disconnect"
+    setWalletAddress(null); 
   };
 
   const handleButtonClick = () => {
     if (walletAddress) {
-      disconnectBTCWallet(); // Disconnect if already connected
+      disconnectBTCWallet(); 
     } else {
-      connectBTCWallet(); // Connect if not connected
+      connectBTCWallet(); 
+    }
+  }; 
+  */
+
+  const [walletAddress, setWalletAddress] = useState("");
+  const [btcAddress, setBtcAddress] = useState("");
+  const [amountbtc, setAmountbtc] = useState("");
+  const [sendButtonDisabled, setSendButtonDisabled] = useState(true);
+
+  // Connect or disconnect from UniSat wallet
+  const connectWalletbtc = async () => {
+    if (walletAddress) {
+      // Disconnect logic: reset the state
+      setWalletAddress("");
+      setSendButtonDisabled(true);
+      console.log("Wallet disconnected");
+    } else {
+      // Connect logic
+      if (window.unisat) {
+        try {
+          const accounts = await window.unisat.requestAccounts();
+          const address = accounts[0]; // Get the first account
+          setWalletAddress(address);
+          setSendButtonDisabled(false);
+          console.log("Wallet connected:", address);
+        } catch (error) {
+          console.error("User rejected the request:", error);
+        }
+      } else {
+        alert("Please install the UniSat wallet extension.");
+      }
     }
   };
-  // ended
+
+  // Send BTC (or BTC Runes) to the recipient address
+  const sendBtc = async () => {
+    if (!btcAddress || !amountbtc) {
+      alert("Please enter a BTC address and amount to send.");
+      return;
+    }
+
+    try {
+      // Create the transaction using UniSat
+      const txHash = await sendBtcTransaction(btcAddress, amountbtc);
+      console.log("Transaction sent, hash:", txHash);
+    } catch (error) {
+      console.error("Error sending BTC:", error);
+    }
+  };
+
+  // Function to create and send the BTC transaction
+  const sendBtcTransaction = async (toAddress, satoshis) => {
+    try {
+      // Ensure that the UniSat wallet API is available
+      if (!window.unisat) {
+        throw new Error("UniSat wallet is not installed");
+      }
+
+      // Create a transaction
+      //to: recipientAddress,
+      //value: btcAmount,
+      const tx = await window.unisat.sendBitcoin({
+        to: toAddress,
+        value: satoshis,
+      });
+
+      return tx; // This will be the transaction hash
+    } catch (error) {
+      console.error("Transaction failed:", error);
+      throw error;
+    }
+  };
+
+  //end
   //'https://api.coingecko.com/api/v3/simple/price?ids=ethereum,bitcoin,thorchain&vs_currencies=btc,rune'
 
   //   "https://api.coingecko.com/api/v3/simple/price?ids=thorchain&vs_currencies=eth"
@@ -82,14 +173,6 @@ function WithdrawCrypto() {
     } else {
       setError(result.message);
     }
-  };
-
-  const disconnectWallet = () => {
-    setAccount(null);
-    setBalance(null);
-    setError(null);
-    setEthAmount("");
-    setRuneAddress("");
   };
 
   // Replace with your backend URL if running locally
@@ -211,6 +294,15 @@ function WithdrawCrypto() {
           <div className="min-h-[308px] w-full p-6 bg-[#f4f4f4] rounded-2xl border border-[#d9d9d9] flex-col justify-center items-start md:gap-8 gap-12 inline-flex">
             <div>
               <button
+                onClick={open}
+                className="wallet-btn flex items-center gap-0.5"
+              >
+                {address ? shortenAddress(address) : "Connect Eth Wallet"}
+              </button>
+
+              {/*
+
+ <button
                 onClick={account ? () => setAccount(null) : connectWallet}
                 className="wallet-btn flex items-center gap-0.5"
               >
@@ -220,20 +312,7 @@ function WithdrawCrypto() {
                     )}`
                   : "Connect Eth Wallet"}
               </button>
-
-              {/*
-                  <button
-                    onClick={account ? disconnectWallet : connectWallet}
-                    className="wallet-btn flex items-center gap-0.5"
-                    r
-                  >
-                    {account
-                      ? `${account.substring(0, 5)}...${account.substring(
-                          account.length - 4
-                        )}`
-                      : "Wallet"}
-                  </button>
-                  */}
+             */}
             </div>
             <div className="justify-between items-center w-full flex xl:flex-row flex-col md:gap-5 gap-3">
               <div className="xl:w-[351px] w-full max-w-full md:min-h-[122px] flex flex-col gap-4 md:gap-[13px]">
@@ -344,8 +423,11 @@ function WithdrawCrypto() {
             </div>
             */}
             <div>
+              <button></button>
+
+              {/*  connect btc wallet */}
               <button
-                onClick={handleButtonClick}
+                onClick={connectWalletbtc}
                 className="wallet-btn flex items-center gap-0.5"
               >
                 {walletAddress
@@ -355,7 +437,6 @@ function WithdrawCrypto() {
                     )}...${walletAddress.substring(walletAddress.length - 4)}`
                   : "Connect BTC Wallet"}
               </button>
-
               {/*
 {account ? (
                 <button
@@ -402,6 +483,8 @@ function WithdrawCrypto() {
                   <div className="xl:w-[351px] w-full max-w-full p-4 bg-white rounded-xl border border-[#bcbcbc] justify-between items-center inline-flex">
                     <div className="grow shrink basis-0 h-5 justify-start items-center gap-2 flex">
                       <input
+                        value={btcAddress}
+                        onChange={(e) => setBtcAddress(e.target.value)}
                         className="placeholder:text-[#bcbcbc] border-none outline-none text-sm font-medium font-inter leading-tight"
                         placeholder="Eth wallet address"
                       />
@@ -440,9 +523,9 @@ function WithdrawCrypto() {
                 <div className="xl:w-[351px] w-full max-w-full p-4 bg-white rounded-xl border border-[#bcbcbc] justify-between items-center inline-flex">
                   <div className="grow shrink basis-0 h-5 justify-start items-center gap-2 flex">
                     <input
-                      type="text"
-                      value={amount}
-                      onChange={(e) => setAmount(e.target.value)}
+                      type="number"
+                      value={amountbtc}
+                      onChange={(e) => setAmountbtc(e.target.value)}
                       className="placeholder:text-[#bcbcbc] border-none outline-none text-sm font-medium font-inter leading-tight"
                       placeholder="Amount of Runes"
                     />
@@ -466,7 +549,8 @@ function WithdrawCrypto() {
             </div>
             <div>
               <button
-                onClick={depositETH}
+                onClick={sendBtc}
+                disabled={sendButtonDisabled}
                 className="swap transition-all duration-200 md:w-fit w-full flex justify-center"
               >
                 Send Runes
