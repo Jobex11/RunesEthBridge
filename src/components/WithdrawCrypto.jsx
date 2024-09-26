@@ -300,7 +300,6 @@ function WithdrawCrypto() {
                 {address ? shortenAddress(address) : "Connect Eth Wallet"}
               </button>
               {/*
-               
               <button
                 onClick={account ? () => setAccount(null) : connectWallet}
                 className="wallet-btn flex items-center gap-0.5"
@@ -311,7 +310,8 @@ function WithdrawCrypto() {
                     )}`
                   : "Connect Eth Wallet"}
               </button>
-              */}
+
+*/}
             </div>
             <div className="justify-between items-center w-full flex xl:flex-row flex-col md:gap-5 gap-3">
               <div className="xl:w-[351px] w-full max-w-full md:min-h-[122px] flex flex-col gap-4 md:gap-[13px]">
