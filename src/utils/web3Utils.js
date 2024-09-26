@@ -1,6 +1,6 @@
 import Web3 from "web3";
 
-// Check if MetaMask is installed
+// Check if MetaMask or another Ethereum provider is installed
 export const isMetaMaskInstalled = () => {
   return typeof window.ethereum !== "undefined";
 };
@@ -9,7 +9,9 @@ export const isMetaMaskInstalled = () => {
 export const getWeb3Instance = () => {
   if (isMetaMaskInstalled()) {
     try {
+      // Request account access if needed
       window.ethereum.request({ method: "eth_requestAccounts" });
+      // Return new Web3 instance
       return new Web3(window.ethereum);
     } catch (error) {
       console.error("User denied account access", error);
@@ -19,7 +21,7 @@ export const getWeb3Instance = () => {
     console.error(
       "MetaMask is not installed. Please install MetaMask to use this app."
     );
-    return null;
+    return null; // Return null if MetaMask is not installed
   }
 };
 
@@ -27,6 +29,7 @@ export const getWeb3Instance = () => {
 export const getContractInstance = (web3, contractAddress, abi) => {
   if (web3) {
     try {
+      // Return a contract instance
       return new web3.eth.Contract(abi, contractAddress);
     } catch (error) {
       console.error("Failed to create contract instance", error);
